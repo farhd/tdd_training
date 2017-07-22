@@ -17,34 +17,38 @@ let SeminarFactory = {
   }
 };
 
-test('seminar has name', (t) => {
-  t.plan(1);
-  const seminar = SeminarFactory.create({name: 'JavaScript Basics'});
-  const expected = 'JavaScript Basics';
+test('Normal seminar', (t) => {
+  t.plan(4);
   
-  t.equal(seminar.name(), expected);
+  const testName = 'Some name';
+  const testPrice = 499;
+  const actualGrossPrice = testPrice * appConf.VAT_RATE;
+  const seminar = SeminarFactory.create({
+    name: testName,
+    price: testPrice,
+  });
+  
+  t.equal(seminar.name(), testName, ': has name');
+  t.equal(seminar.netPrice(), testPrice, ': has price');
+  t.equal(seminar.grossPrice(), actualGrossPrice, ': gross price adds VAT to net price');
+  t.equal(seminar.has3LetterDiscount(), false, ': doesn\'t have discounted price');
 });
 
-test('seminar has price', (t) => {
-  t.plan(1);
-  const seminar = SeminarFactory.create({price: 499});
-  const expected = 499;
-
-  t.equal(seminar.netPrice(), expected);
-});
-
-test('seminar has a gross price that adds VAT to net price', (t) => {
-  t.plan(1);
-  const seminar = SeminarFactory.create({price: 100});
-  const expected = 100 * appConf.VAT_RATE;
-
-  t.equal(seminar.grossPrice(), expected);
-});
-
-test('if tax free, gross price = net price', (t) => {
+test('tax free seminar', (t) => {
   t.plan(2);
   const seminar = SeminarFactory.create({taxFree: true});
 
   t.equal(seminar.isTaxFree(), true, ': is taxFree');
   t.equal(seminar.grossPrice(), seminar.netPrice(), ': gross price = net price');
+});
+
+test('3-letter seminar', (t) => {
+  t.plan(3);
+  const seminar = SeminarFactory.create({name: 'TDD', price: 100});
+  const disc3Letter = appConf.DISC_3_LETTER;
+  const expectedDiscPercentage = (disc3Letter * 100) + '%';
+
+  t.equal(seminar.has3LetterDiscount(), true, ': has 3-letter name');
+  t.equal(seminar.discountPercentage(), disc3Letter, ': has ' + expectedDiscPercentage + ' discount');
+  t.equal(seminar.netPrice(), 95, ': has discounted price');
 });
