@@ -43,12 +43,13 @@ test('tax free seminar', (t) => {
 });
 
 test('3-letter seminar', (t) => {
-  t.plan(3);
+  t.plan(4);
   const seminar = SeminarFactory.create({name: 'TDD', price: 100});
   const disc3Letter = appConf.DISC_3_LETTER;
   const expectedDiscPercentage = (disc3Letter * 100) + '%';
 
   t.equal(seminar.has3LetterDiscount(), true, ': has 3-letter name');
   t.equal(seminar.discountPercentage(), disc3Letter, ': has ' + expectedDiscPercentage + ' discount');
-  t.equal(seminar.netPrice(), 95, ': has discounted price');
+  t.equal(seminar.netPrice(), 95, ': has discounted price of 95');
+  t.equal(seminar.discount(), 5, ': has discount of 5');
 });

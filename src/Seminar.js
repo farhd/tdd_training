@@ -12,9 +12,9 @@ let Seminar = {
     this._name = name;
     this._price = price;
     this._taxFree = taxFree;
-    this._discount = 0;
+    this._discountPercentage = 0;
     if (this.has3LetterDiscount()) {
-      this._discount += appConf.DISC_3_LETTER;
+      this._discountPercentage += appConf.DISC_3_LETTER;
     }
     return this;
   },
@@ -24,7 +24,7 @@ let Seminar = {
   },
 
   netPrice: function() {
-    return this._price - (this._price * this._discount);
+    return this._price - this.discount();
   },
 
   grossPrice: function() {
@@ -40,7 +40,11 @@ let Seminar = {
   },
 
   discountPercentage: function() {
-    return this._discount;
+    return this._discountPercentage;
+  },
+
+  discount: function() {
+    return this._price * this.discountPercentage();
   }
 };
 
